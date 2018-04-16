@@ -1,0 +1,7 @@
+
+/* faq */
+#smfaq .question:hover {background-color:inherit;}
+#smfaq .active {color:#337ab7;}
+#smfaq .question:hover {color:none;}
+#smfaq .question {margin:0px;line-height:16px;padding:4px 30px;overflow:hidden;font-weight:300;letter-spacing:0.3px;}
+.panel-body {padding:10px 0px 10px 0px;}
