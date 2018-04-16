@@ -2,9 +2,9 @@
 /**
  * SMFAQ
  *
- * @package		component for Joomla 1.6. - 2.5
- * @version		1.7 beta 1
- * @copyright	(C)2009 - 2012 by SmokerMan (http://joomla-code.ru)
+ * @package		Component for Joomla 2.5.6+
+ * @version		1.7.3
+ * @copyright	(C)2009 - 2013 by SmokerMan (http://joomla-code.ru)
  * @license		GNU/GPL v.3 see http://www.gnu.org/licenses/gpl.html
  */
 
@@ -34,9 +34,11 @@ switch ($this->params->get('open_question', 0)) {
 ?>
 
 <?php if ($this->params->get('show_page_title')) : ?>
+	<div class="page-header">
 <h1>
 	<?php echo $this->escape($this->params->get('page_title')); ?>
 </h1>
+</div>
 <?php endif; ?>
 <?php if ( $this->params->get( 'show_desc', 1 ) ) : ?>
 <div class="contentdescription<?php echo $this->params->get( 'pageclass_sfx' ); ?>">
@@ -56,12 +58,12 @@ if ($canCreate && !$canEdit) :
 	if ($this->params->get('show_form', 0) && isset($this->form)) : ?>
 		<div><?php echo $this->form; ?></div>
 	<?php else : ?>
-		<span onclick="SmFaq.showform(true,this)" class="button"><?php echo JText::_('COM_SMFAQ_NEW_QUESTION'); ?></span>
+		<div class="padding-bottom20"><span onclick="SmFaq.showform(true,this)" class="btn btn-success"><?php echo JText::_('COM_SMFAQ_NEW_QUESTION'); ?></span></div>
 <?php endif; ?>
 <?php elseif ($canEdit) : ?>
-	<a href="<?php echo JRoute::_('index.php?option=com_smfaq&amp;task=edit.add&amp;catid='.$this->category->id); ?>" class="button">
+	<a href="<?php echo JRoute::_('index.php?option=com_smfaq&amp;task=edit.add&amp;catid='.$this->category->id); ?>" class="btn btn-success">
 	<?php echo JText::_('COM_SMFAQ_NEW_QUESTION'); ?></a>
-	<span class="button" style="margin-left:10px;" onclick="SmFaq.unpublished(<?php echo JRequest::getInt('Itemid', null); ?>)">
+	<span class="btn btn-success" style="margin-left:10px;" onclick="SmFaq.unpublished(<?php echo JFactory::getApplication()->input->get('Itemid', null, 'int'); ?>)">
 	<?php echo JText::_('COM_SMFAQ_SHOW_NO_ANSWER_QUESTIONS'); ?></span>
 	<div id="smfaq-unpub"></div>
 <?php endif; ?>
@@ -86,55 +88,63 @@ if ($canCreate && !$canEdit) :
 				else :
 				$onclick = '';
 				endif; ?>
-			<div id="q<?php echo $item->id; ?>" class="question" <?php echo $onclick; ?>>
-			<a name="<?php echo 'p'.$item->id; ?>" class="img"></a>
-			<?php echo $this->escape($item->question); ?>
-            </div>
+    <div class="panel-group" id="faqAccordion">
+        <div class="panel panel-default ">
+            <div class="panel-heading accordion-toggle question-toggle collapsed" data-toggle="collapse" data-parent="#faqAccordion" data-target="#question0">
+                 <h4 class="panel-title">
+							<div id="q<?php echo $item->id; ?>" class="question" <?php echo $onclick; ?>>
+							<a name="<?php echo 'p'.$item->id; ?>" class="img"></a>
+							<?php echo $this->escape($item->question); ?>
+				         </div>
+			        </h4>
+			   </div>
             <div id="a<?php echo $item->id; ?>" class="answer" style="<?php echo $style; ?>"><div id="ac<?php echo $item->id; ?>" class="answer_content" style="top: 0px;">
             <?php //Created date and author question
             	$author = $this->params->get('show_created_date') || $this->params->get('show_created_by');
             	$ans = $this->params->get('show_answer_created_by') || $this->params->get('show_answer_created_date');
             ?>
 			<?php if ($author || $ans) : ?>
-				<div class="info">
+				<div>
 				<?php if ($author) : ?>
 					<div>
 		            	<?php if ($this->params->get( 'show_created_by')) : ?>
-		                	<span class="author"><?php echo JText::sprintf('COM_SMFAQ_CREATED_BY', $this->escape($item->created_by)); ?></span>
+		                	<span class="author"><small><?php echo JText::sprintf('COM_SMFAQ_CREATED_BY', $this->escape($item->created_by)); ?></small></span>
 		                <?php endif ?>
 		            	<?php if ($this->params->get( 'show_created_date')) : ?>
-		                	<span class="date"><?php echo JText::sprintf('COM_SMFAQ_CREATED', JHTML::_('date', $item->created, $this->params->get('date_format'))); ?></span>
+		                	<span class="date"><small><?php echo JText::sprintf('COM_SMFAQ_CREATED', JHTML::_('date', $item->created, $this->params->get('date_format'))); ?></small></span>
 		                <?php endif ?>
 		            </div>
 	            <?php endif ?>   
 	            <?php if ($ans) : ?>
 	            	<div>
 		                <?php if ($this->params->get('show_answer_created_by')) : ?>
-		                    <span class="ans-author"><?php echo  JText::sprintf('COM_SMFAQ_ANSWER_BY', $this->escape($item->answer_created_by)); ?></span>
+		                    <span class="ans-author"><small><?php echo  JText::sprintf('COM_SMFAQ_ANSWER_BY', $this->escape($item->answer_created_by)); ?></small></span>
 		                <?php endif ?> 
 		     			<?php if ($this->params->get('show_answer_created_date')) : ?>
-		                    <span class="ans-date"><?php echo JText::sprintf('COM_SMFAQ_ANSWER_CREATED', JHTML::_('date', $item->answer_created, $this->params->get('date_format'))); ?></span>
+		                    <span class="ans-date"><small><?php echo JText::sprintf('COM_SMFAQ_ANSWER_CREATED', JHTML::_('date', $item->answer_created, $this->params->get('date_format'))); ?></small></span>
 		                <?php endif ?>
 		                
 	                </div>
 	            <?php endif ?>
 	            </div>
 	        <?php endif ?>   
-            <div class="clr"></div>
-           <?php 
+             <div class="panel-body">
+                  <h5><span class="label label-primary">Ответ</span></h5>
+               </div>
+           <blockquote><?php 
             if ($this->params->get('content_plugins')) {
             	 $item->answer = JHtml::_('content.prepare', $item->answer);
             }
             ?>  
-			<?php echo $item->answer; ?> 
+			<?php echo $item->answer; ?> </blockquote>
             <?php if ($canEdit) : ?> 
             	<div class="clr"></div>
-				<a class="button" href="<?php echo JRoute::_('index.php?option=com_smfaq&task=edit.edit&catid='.$item->catid.'&id='.$item->id); ?>"><?php echo JText::_('COM_SMFAQ_EDIT'); ?></a>
+				<a class="btn btn-success" href="<?php echo JRoute::_('index.php?option=com_smfaq&task=edit.edit&catid='.$item->catid.'&id='.$item->id); ?>"><?php echo JText::_('COM_SMFAQ_EDIT'); ?></a>
 				<span><?php echo JText::sprintf('COM_SMFAQ_VOTE_STATE', $item->vote_yes, $item->vote_no, $item->comments); ?></span>
 			<?php endif; ?>	
 			<?php // Вывод опроса ?>
-            <?php if ($this->params->get('show_poll', 1)) : ?>
-	            <form action="#" name="vote<?php echo $item->id; ?>" class="vote">
+            <?php if ($this->params->get('show_poll', 1)) : ?><hr/>
+	            <form action="#" name="vote<?php echo $item->id; ?>">
 	                <?php echo JText::_('COM_SMFAQ_VOTE_QUESTION'); ?>
 	                    <input type="radio" name="vote_question" onclick="SmFaq.Vote(this.form, value)" value="1" /> <?php echo JText::_('COM_SMFAQ_YES'); ?>
 	                    <input type="radio" name="vote_question" onclick="SmFaq.Vote(this.form, value)" value="0" /> <?php echo JText::_('COM_SMFAQ_NO'); ?>
@@ -144,6 +154,8 @@ if ($canCreate && !$canEdit) :
             <?php endif; ?> 
             </div>
             </div>
+        </div>
+     </div>
 <?php endforeach; ?>
 <?php //Пагинация ?>
 <?php if ($this->pagination->get('pages.total') > 1) : ?>
